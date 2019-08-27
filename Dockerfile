@@ -68,6 +68,7 @@ COPY shorewall.interfaces /etc/shorewall/interfaces
 COPY shorewall.policy /etc/shorewall/policy
 COPY shorewall.rules /etc/shorewall/rules
 COPY opt-sysinit.sh /opt/sysinit.sh
+COPY proxy /etc/apt/apt.conf.d/
 
 # RUN apt-get update 
 RUN chmod +x /etc/init.d/dovecot \
