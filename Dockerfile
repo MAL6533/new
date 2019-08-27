@@ -80,7 +80,7 @@ RUN chmod +x /etc/init.d/dovecot \
     && sed -i 's/SetHandler/#SetHandler/' /etc/apache2/mods-available/php7.3.conf
     
 RUN systemctl enable shorewall.service rsyslog.service sshd.service fail2ban.service dovecot.service cron.service bind9.service opendkim.service postfix.service apache2.service postgrey.service usermin.service webmin.service
-RUN echo "root:cedint" | cedint
+RUN echo "root:cedint" | chpasswd
 RUN touch /etc/network/interfaces
     
 EXPOSE 80 443 21 25 110 143 465 587 993 995 10000 20000 53/udp 53/tcp
