@@ -1,0 +1,6 @@
+Acquire  {
+HTTP::proxy "http://192.168.237.11:443";
+HTTPS::proxy "http://192.168.237.11:443";
+FTP::proxy "http://192.168.237.11:443";
+}
+
