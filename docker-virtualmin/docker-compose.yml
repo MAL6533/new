@@ -1,0 +1,71 @@
+version: "3.1"
+
+services:
+    mysql:
+        image: mariadb:10.4.6
+        hostname: mysqldb
+        restart: unless-stopped
+        networks: 
+            - virtualmin
+        volumes:
+            - "${PWD}/mysql-data:/var/lib/mysql"
+        ##
+        ## All .env variables
+        ##
+        ## Source all variables defined in .env
+        ## This also makes any custom variable available in each PHP/HHVM container
+        ##
+        env_file:
+        - ./.env
+
+    webmin:
+        image: anthonyhk/virtualmin:1.0
+        build: .
+        hostname: vm.anthony.hk
+        restart: unless-stopped
+        networks:
+            - virtualmin
+        ports:
+            # exposed ports: 443 25 110 143 465 587 993 995 10000 20000
+            # map them wisely
+            - "11080:80"
+            - "11443:443"
+            - "10000:10000"
+            - "20000:20000"
+        volumes:
+            - "${PWD}/hosting-etc:/etc"
+            - "${PWD}/hosting-lib:/var/lib"
+            - "${PWD}/hosting-log:/var/log"
+            - "${PWD}/hosting-www:/var/www"
+        ##
+        ## All .env variables
+        ##
+        ## Source all variables defined in .env
+        ## This also makes any custom variable available in each PHP/HHVM container
+        ##
+        env_file:
+        - ./.env
+
+    # ------------------------------------------------------------
+    # Redis
+    # ------------------------------------------------------------
+    redis:
+        image: redis:${REDIS_SERVER}
+        hostname: redis
+        networks: 
+            - virtualmin
+        # Apply custom arguments to redis startup
+        command: redis-server ${REDIS_ARGS:- }
+        environment:
+            - REDIS_ARGS=${REDIS_ARGS:- }
+
+        # ports: # bridged-only by default
+        #     - "${LOCAL_LISTEN_ADDR:-127.0.0.1}${HOST_PORT_REDIS:-6379}:6379"
+
+        depends_on:
+            - webmin
+
+
+networks: 
+    virtualmin:
+        driver: bridge
